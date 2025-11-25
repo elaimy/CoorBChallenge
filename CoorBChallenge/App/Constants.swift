@@ -10,3 +10,7 @@ import Foundation
 enum APIConstants {
     static let baseURL = "https://restcountries.com/v2/"
 }
+
+enum StorageKeys {
+    static let selectedCountries = "selectedCountries"
+}
