@@ -8,31 +8,24 @@
 import SwiftUI
 
 struct CountryFlagView: View {
-    let flagURLString: String?
+    let flagCountryCode: String
 
     var body: some View {
-        Group {
-            if let urlString = flagURLString,
-               let url = URL(string: urlString) {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    default:
-                        Color.gray.opacity(0.2)
-                    }
-                }
-            } else {
-                Color.gray.opacity(0.2)
+        Text(flagEmoji(for: flagCountryCode))
+            .font(.system(size: 30))
+            .frame(width: 40, height: 28)
+            .background(Color.gray.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+    }
+
+    private func flagEmoji(for code: String) -> String {
+        let base: UInt32 = 127397
+        var scalars = String.UnicodeScalarView()
+        for scalar in code.uppercased().unicodeScalars {
+            if let flagScalar = UnicodeScalar(base + scalar.value) {
+                scalars.append(flagScalar)
             }
         }
-        .frame(width: 40, height: 26)
-        .clipShape(RoundedRectangle(cornerRadius: 4))
-        .overlay(
-            RoundedRectangle(cornerRadius: 4)
-                .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
-        )
+        return String(scalars)
     }
 }

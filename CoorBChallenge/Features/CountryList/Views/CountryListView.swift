@@ -12,60 +12,67 @@ struct CountryListView: View {
 
     var body: some View {
         NavigationStack {
-            List {
-                // Selected countries section
-                if !viewModel.selectedCountries.isEmpty {
+            ZStack(alignment: .bottom) {
+                List {
+                    // Selected countries
+                    if !viewModel.selectedCountries.isEmpty {
+                        Section {
+                            SelectedCountriesSectionView(
+                                countries: viewModel.selectedCountries,
+                                onTap: { country in
+                                    viewModel.didTapCountry(country)
+                                },
+                                onRemove: { country in
+                                    viewModel.removeCountry(country)
+                                }
+                            )
+                        } header: {
+                            Text("Selected Countries (Max 5)")
+                                .font(.headline)
+                        }
+                    }
+
+                    // All countries
                     Section {
-                        SelectedCountriesSectionView(
-                            countries: viewModel.selectedCountries,
-                            onTap: { country in
-                                viewModel.didTapCountry(country)
-                            },
-                            onRemove: { country in
-                                viewModel.removeCountry(country)
+                        AllCountriesSectionView(
+                            countries: viewModel.filteredAllCountries,
+                            selectedCountries: viewModel.selectedCountries,
+                            maxSelected: 5,
+                            onToggleSelection: { country in
+                                viewModel.toggleSelection(for: country)
                             }
                         )
                     } header: {
-                        Text("Selected Countries (Max 5)")
+                        Text("All Countries")
                             .font(.headline)
                     }
                 }
-
-                // All countries section
-                Section {
-                    CountrySearchBar(text: $viewModel.searchQuery)
-
-                    AllCountriesSectionView(
-                        countries: viewModel.filteredAllCountries,
-                        selectedCountries: viewModel.selectedCountries,
-                        maxSelected: 5,
-                        onTap: { country in
-                            viewModel.didTapCountry(country)
-                        },
-                        onToggleSelection: { country in
-                            viewModel.toggleSelection(for: country)
-                        }
-                    )
-                } header: {
-                    Text("All Countries")
-                        .font(.headline)
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .padding(.bottom, 72) // leave space for the search bar
+                .navigationTitle("Countries")
+                .refreshable {
+                    await viewModel.refresh()
                 }
-            }
-            .listStyle(.insetGrouped)
-            .navigationTitle("Countries")
-            .refreshable {
-                await viewModel.refresh()
-            }
-            .overlay {
-                if viewModel.isLoading && viewModel.allCountries.isEmpty {
-                    ProgressView()
+                .overlay {
+                    if viewModel.isLoading && viewModel.allCountries.isEmpty {
+                        ProgressView()
+                    }
                 }
+                .alert("Error", isPresented: $viewModel.hasError) {
+                    Button("OK", role: .cancel) { }
+                } message: {
+                    Text(viewModel.errorMessage ?? "Something went wrong")
+                }
+
+                // Bottom floating search bar
+                CountrySearchBar(text: $viewModel.searchQuery)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 16)
             }
-            .alert("Error", isPresented: $viewModel.hasError) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(viewModel.errorMessage ?? "Something went wrong")
-            }
+        }
+        .task {
+            viewModel.onAppear()
         }
     }
 }

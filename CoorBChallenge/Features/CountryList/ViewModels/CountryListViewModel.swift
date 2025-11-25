@@ -76,19 +76,26 @@ final class CountryListViewModel: ObservableObject {
     // MARK: - Public actions
 
     func toggleSelection(for country: Country) {
-        if selectedCountries.contains(where: { $0.alpha2Code == country.alpha2Code }) {
-            removeCountry(country)
-        } else {
-            addCountry(country)
-        }
+        addCountry(country)
+        
     }
 
     func addCountry(_ country: Country) {
-        guard !selectedCountries.contains(where: { $0.alpha2Code == country.alpha2Code }) else { return }
-        guard selectedCountries.count < maxSelected else { return }
+        // already selected → ignore
+        guard !selectedCountries.contains(where: { $0.alpha2Code == country.alpha2Code }) else {
+            return
+        }
+
+        // max reached → show alert, don’t add
+        guard selectedCountries.count < maxSelected else {
+            hasError = true
+            errorMessage = "You can select up to \(maxSelected) countries."
+            return
+        }
 
         selectedCountries.append(country)
         saveSelection()
+        clearError()
     }
 
     func removeCountry(_ country: Country) {

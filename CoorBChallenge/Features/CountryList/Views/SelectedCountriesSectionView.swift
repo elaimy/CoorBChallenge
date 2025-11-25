@@ -18,6 +18,8 @@ struct SelectedCountriesSectionView: View {
                 country: country,
                 accessory: .chevron
             )
+            .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
+            .listRowBackground(Color.clear)
             .contentShape(Rectangle())
             .onTapGesture {
                 onTap(country)

@@ -28,9 +28,10 @@ struct CountrySearchBar: View {
                 }
             }
         }
-        .padding(8)
-        .background(.ultraThinMaterial)
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(.ultraThinMaterial) // glass effect
         .clipShape(Capsule())
-        .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+        .shadow(radius: 3)
     }
 }

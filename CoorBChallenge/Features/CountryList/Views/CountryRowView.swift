@@ -20,7 +20,7 @@ struct CountryRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            CountryFlagView(flagURLString: country.flag)
+            CountryFlagView(flagCountryCode: country.alpha2Code)
 
             VStack(alignment: .leading, spacing: 4) {
                 Text(country.name)
@@ -48,6 +48,11 @@ struct CountryRowView: View {
                 EmptyView()
             }
         }
-        .padding(.vertical, 4)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(Color(.systemBackground))
+        )
     }
 }

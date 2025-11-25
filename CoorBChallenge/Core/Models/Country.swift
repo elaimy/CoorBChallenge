@@ -24,3 +24,16 @@ struct Country: Identifiable, Codable, Equatable {
         let symbol: String?
     }
 }
+
+extension Country {
+    var flagEmoji: String {
+        let base: UInt32 = 127397 // regional indicator symbol base
+        var scalars = String.UnicodeScalarView()
+        for scalar in alpha2Code.uppercased().unicodeScalars {
+            if let flagScalar = UnicodeScalar(base + scalar.value) {
+                scalars.append(flagScalar)
+            }
+        }
+        return String(scalars)
+    }
+}
