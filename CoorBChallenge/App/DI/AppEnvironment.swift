@@ -15,3 +15,11 @@ struct AppEnvironment {
     
     
 }
+
+extension AppEnvironment {
+    static let live = AppEnvironment(
+        countryService: CountryService(),
+        locationService: LocationService(),
+        countryStorage: CountryStorage()
+    )
+}
