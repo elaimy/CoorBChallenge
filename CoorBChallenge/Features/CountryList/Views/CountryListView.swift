@@ -8,11 +8,64 @@
 import SwiftUI
 
 struct CountryListView: View {
-    var body: some View {
-        Text("Country List")
-    }
-}
+    @StateObject var viewModel: CountryListViewModel
 
-#Preview {
-    CountryListView()
+    var body: some View {
+        NavigationStack {
+            List {
+                // Selected countries section
+                if !viewModel.selectedCountries.isEmpty {
+                    Section {
+                        SelectedCountriesSectionView(
+                            countries: viewModel.selectedCountries,
+                            onTap: { country in
+                                viewModel.didTapCountry(country)
+                            },
+                            onRemove: { country in
+                                viewModel.removeCountry(country)
+                            }
+                        )
+                    } header: {
+                        Text("Selected Countries (Max 5)")
+                            .font(.headline)
+                    }
+                }
+
+                // All countries section
+                Section {
+                    CountrySearchBar(text: $viewModel.searchQuery)
+
+                    AllCountriesSectionView(
+                        countries: viewModel.filteredAllCountries,
+                        selectedCountries: viewModel.selectedCountries,
+                        maxSelected: 5,
+                        onTap: { country in
+                            viewModel.didTapCountry(country)
+                        },
+                        onToggleSelection: { country in
+                            viewModel.toggleSelection(for: country)
+                        }
+                    )
+                } header: {
+                    Text("All Countries")
+                        .font(.headline)
+                }
+            }
+            .listStyle(.insetGrouped)
+            .navigationTitle("Countries")
+            .refreshable {
+                await viewModel.refresh()
+            }
+            .overlay {
+                if viewModel.isLoading && viewModel.allCountries.isEmpty {
+                    ProgressView()
+                }
+            }
+            .alert("Error", isPresented: $viewModel.hasError) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(viewModel.errorMessage ?? "Something went wrong")
+            }
+        }
+    }
 }

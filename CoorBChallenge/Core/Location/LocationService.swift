@@ -38,7 +38,7 @@ final class LocationService: NSObject, LocationServiceProtocol, CLLocationManage
 
         switch status {
         case .denied, .restricted:
-            // User said no → just return nil so caller can pick a fallback
+            // User said no -> just return nil so caller can pick a fallback
             return nil
 
         case .notDetermined:

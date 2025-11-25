@@ -9,9 +9,19 @@ import SwiftUI
 
 @main
 struct CoorBChallengeApp: App {
+
+    private let env = AppEnvironment.live
+
     var body: some Scene {
         WindowGroup {
-            CountryListView()
+            CountryListView(
+                viewModel: CountryListViewModel(
+                    countryService: env.countryService,
+                    locationService: env.locationService,
+                    storage: env.countryStorage,
+                    defaultCountryCode: "EG"
+                )
+            )
         }
     }
 }
