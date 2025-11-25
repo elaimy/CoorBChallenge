@@ -81,12 +81,12 @@ final class CountryListViewModel: ObservableObject {
     }
 
     func addCountry(_ country: Country) {
-        // already selected → ignore
+        // already selected -> ignore
         guard !selectedCountries.contains(where: { $0.alpha2Code == country.alpha2Code }) else {
             return
         }
 
-        // max reached → show alert, don’t add
+        // max reached -> show alert, don’t add
         guard selectedCountries.count < maxSelected else {
             hasError = true
             errorMessage = "You can select up to \(maxSelected) countries."

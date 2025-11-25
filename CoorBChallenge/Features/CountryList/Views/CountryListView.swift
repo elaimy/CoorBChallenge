@@ -19,9 +19,6 @@ struct CountryListView: View {
                         Section {
                             SelectedCountriesSectionView(
                                 countries: viewModel.selectedCountries,
-                                onTap: { country in
-                                    viewModel.didTapCountry(country)
-                                },
                                 onRemove: { country in
                                     viewModel.removeCountry(country)
                                 }
